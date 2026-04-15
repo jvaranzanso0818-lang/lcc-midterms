@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LCC Midterms Exam Suite</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#16213e 100%);font-family:Georgia,'Times New Roman',serif;color:#f0e6d3}
+  button{cursor:pointer;font-family:Georgia,'Times New Roman',serif}
+  input{font-family:Georgia,'Times New Roman',serif}
+
+  /* HOME */
+  #home{max-width:820px;margin:0 auto;padding:40px 20px}
+  .home-header{text-align:center;margin-bottom:48px}
+  .home-eyebrow{font-size:12px;letter-spacing:6px;color:#c8a96e;text-transform:uppercase;margin-bottom:14px}
+  .home-title{font-size:clamp(2rem,7vw,3.8rem);font-weight:900;background:linear-gradient(135deg,#f0e6d3,#c8a96e,#f0e6d3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;letter-spacing:-1px;margin-bottom:10px}
+  .home-sub{font-size:clamp(1rem,2.5vw,1.2rem);color:#8ba4c8;letter-spacing:3px;text-transform:uppercase}
+  .home-badge{display:inline-block;margin-top:18px;background:rgba(200,169,110,0.1);border:1px solid rgba(200,169,110,0.3);border-radius:30px;padding:8px 24px;font-size:13px;color:#c8a96e}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+  .sec-card{background:rgba(255,255,255,0.04);border-radius:16px;padding:28px;transition:all .3s;position:relative;overflow:hidden}
+  .sec-card:hover{transform:translateY(-4px);background:rgba(255,255,255,0.08)}
+  .card-bar{position:absolute;top:0;left:0;right:0;height:3px}
+  .card-part{font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-bottom:10px}
+  .card-title{font-size:1.35rem;font-weight:700;margin-bottom:8px;color:#f0e6d3}
+  .card-desc{font-size:13px;color:#8ba4c8;line-height:1.6;margin-bottom:18px}
+  .card-footer{display:flex;justify-content:space-between;align-items:center}
+  .card-count{font-size:12px;color:#c8a96e}
+  .card-btn{color:#fff;border:none;border-radius:20px;padding:6px 18px;font-size:12px;font-weight:700}
+  .home-footer{text-align:center;margin-top:40px;color:#3a4558;font-size:13px}
+
+  /* QUIZ */
+  #quiz{display:none;flex-direction:column;min-height:100vh}
+  .quiz-topbar{background:rgba(0,0,0,0.55);border-bottom:1px solid rgba(255,255,255,0.08);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:20}
+  .topbar-center{text-align:center}
+  .topbar-section{font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-bottom:2px}
+  .topbar-info{font-size:13px;color:#8ba4c8}
+  .btn-home{background:none;border:1px solid rgba(255,255,255,0.2);color:#8ba4c8;border-radius:8px;padding:6px 14px;font-size:13px}
+  .btn-submit-all{color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700}
+  .progress-bar-wrap{height:4px;background:rgba(255,255,255,0.08)}
+  .progress-bar{height:100%;transition:width .3s}
+  .q-nav{padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:5px;flex-wrap:wrap;max-height:110px;overflow-y:auto}
+  .qnum-btn{width:28px;height:28px;border-radius:6px;border:none;font-size:11px;font-weight:700;transition:all .2s}
+  .quiz-body{max-width:780px;margin:0 auto;padding:28px 20px 100px;width:100%}
+  .q-card{border-radius:18px;padding:30px 26px;margin-bottom:22px}
+  .q-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-bottom:14px}
+  .q-text{font-size:clamp(1rem,2.4vw,1.18rem);line-height:1.75;margin-bottom:22px}
+
+  /* feedback inline */
+  .feedback-box{border-radius:12px;padding:14px 18px;margin-top:14px;font-size:14px;line-height:1.6;animation:fadeIn .3s}
+  .feedback-correct{background:rgba(39,174,96,0.15);border:1px solid rgba(39,174,96,0.4);color:#a8e6c0}
+  .feedback-wrong{background:rgba(231,76,60,0.13);border:1px solid rgba(231,76,60,0.35);color:#f8b4a8}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* MTF buttons */
+  .tf-wrap{display:flex;gap:12px}
+  .tf-btn{flex:1;padding:15px;border-radius:12px;border:2px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);color:#c8c8c8;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;transition:all .2s}
+
+  /* Word bank */
+  .bank-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+  .bank-chip{padding:9px 18px;border-radius:30px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.07);color:#c8c8c8;font-size:13px;font-weight:600;transition:all .2s}
+
+  /* MC */
+  .mc-options{display:flex;flex-direction:column;gap:10px}
+  .mc-btn{padding:13px 17px;border-radius:12px;border:2px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:#d8d8d8;font-size:14px;line-height:1.5;text-align:left;transition:all .2s}
+  .mc-btn .opt-letter{font-weight:700;margin-right:10px;opacity:.7}
+
+  /* text input */
+  .txt-input{width:100%;padding:13px 17px;border-radius:10px;font-size:15px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);color:#f0e6d3;outline:none}
+
+  /* nav buttons */
+  .nav-row{display:flex;gap:12px;justify-content:space-between}
+  .btn-prev{padding:12px 22px;border-radius:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#c8c8c8;font-size:14px}
+  .btn-next{padding:12px 26px;border-radius:10px;border:none;color:#fff;font-size:14px;font-weight:700}
+  .btn-finish{padding:12px 26px;border-radius:10px;border:none;background:#c8a96e;color:#0a0a0a;font-size:14px;font-weight:700}
+
+  /* RESULTS */
+  #results{display:none;max-width:780px;margin:0 auto;padding:40px 20px}
+  .score-card{border-radius:20px;padding:40px 30px;text-align:center;margin-bottom:28px}
+  .score-eyebrow{font-size:11px;letter-spacing:5px;text-transform:uppercase;margin-bottom:16px}
+  .score-pct{font-size:5rem;font-weight:900;line-height:1;margin-bottom:8px}
+  .score-grade{font-size:1.5rem;font-weight:700;margin-bottom:8px}
+  .score-sub{font-size:14px;color:#8ba4c8;margin-bottom:22px}
+  .score-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn-retry{color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700}
+  .btn-home2{padding:12px 24px;border-radius:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#c8c8c8;font-size:14px}
+  .toggle-wrong{width:100%;padding:14px;border-radius:12px;background:rgba(231,76,60,0.14);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;font-size:15px;font-weight:700;margin-bottom:14px}
+  .wrong-item{background:rgba(231,76,60,0.07);border:1px solid rgba(231,76,60,0.22);border-radius:14px;padding:18px 20px;margin-bottom:12px}
+  .wi-num{font-size:11px;color:#e74c3c;letter-spacing:2px;margin-bottom:8px}
+  .wi-q{font-size:14px;line-height:1.65;color:#d8d8d8;margin-bottom:12px}
+  .wi-yours{color:#e74c3c;font-size:13px;margin-bottom:4px}
+  .wi-correct{color:#27ae60;font-size:14px;font-weight:700}
+  .wi-correction{background:rgba(39,174,96,0.09);border:1px solid rgba(39,174,96,0.28);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:13px;color:#a8e6c0;line-height:1.55}
+  .perfect{text-align:center;padding:30px;background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);border-radius:16px;color:#27ae60;font-size:18px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-header">
+    <div class="home-eyebrow">Aviation Studies · Philippine Academic Edition</div>
+    <div class="home-title">LCC MIDTERMS</div>
+    <div class="home-sub">Comprehensive Exam Suite</div>
+    <div class="home-badge">400 Questions · All Terms From File · Instant Feedback</div>
+  </div>
+  <div class="cards-grid" id="cardsGrid"></div>
+  <div class="home-footer">Questions shuffle on every attempt · Instant feedback after every answer</div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-topbar">
+    <button class="btn-home" onclick="goHome()">← Home</button>
+    <div class="topbar-center">
+      <div class="topbar-section" id="tbSection"></div>
+      <div class="topbar-info" id="tbInfo"></div>
+    </div>
+    <button class="btn-submit-all" id="btnSubmitAll" onclick="submitAll()">Submit All</button>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progBar"></div></div>
+  <div class="q-nav" id="qNav"></div>
+  <div class="quiz-body">
+    <div class="q-card" id="qCard">
+      <div class="q-label" id="qLabel"></div>
+      <div class="q-text" id="qText"></div>
+      <div id="qInput"></div>
+      <div id="qFeedback"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-prev" id="btnPrev" onclick="goPrev()">← Previous</button>
+      <button class="btn-next" id="btnNext" onclick="goNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="score-card" id="scoreCard">
+    <div class="score-eyebrow" id="resEyebrow"></div>
+    <div class="score-pct" id="resPct"></div>
+    <div class="score-grade" id="resGrade"></div>
+    <div class="score-sub" id="resSub"></div>
+    <div class="score-actions">
+      <button class="btn-retry" id="btnRetry" onclick="retrySection()">Retry This Section</button>
+      <button class="btn-home2" onclick="goHome()">Choose Another Section</button>
+    </div>
+  </div>
+  <div id="wrongSection"></div>
+</div>
+
+<script>
+// =====================================================================
+// DATA
+// =====================================================================
+const IDENTIFICATION = [
+  {q:"This operational practice standardizes an airline's entire fleet around a single aircraft family, reducing training time, parts inventory, and maintenance complexity.",a:"Straight Forward Fleets"},
+  {q:"This network design sends aircraft on direct city-pair routes, eliminating connection handling and enabling higher aircraft utilization rates.",a:"Point to point networks"},
+  {q:"This critical ground metric measures the window between an aircraft's arrival and subsequent departure, directly impacting how many revenue cycles a plane completes daily.",a:"Turnaround Time"},
+  {q:"This revenue model separates the base ticket price from additional services, allowing airlines to advertise deceptively low headline fares.",a:"Unbundled fares"},
+  {q:"Income streams beyond the base ticket price — including baggage fees, seat selection, and onboard food sales — are collectively referred to by this term.",a:"ancillary revenue"},
+  {q:"This LCC cost-reduction philosophy encompasses streamlined cabin service, simplified ground-handling contracts, and reduced headcount across departments.",a:"Lean staffing and processes"},
+  {q:"This quantitative measure expresses the proportion of available seats occupied by revenue passengers on a given flight.",a:"Load factor"},
+  {q:"This metric tracks total elapsed airborne time and is used alongside cycles to determine inspection intervals.",a:"Block Hours"},
+  {q:"Representing one complete takeoff-pressurization-landing sequence, this unit of wear is especially critical for LCC maintenance teams on short-sector operations.",a:"Cycles"},
+  {q:"This financial phenomenon occurs when a low-cost carrier enters a route, causing incumbent fares to drop 50% or more while doubling or tripling passenger volume.",a:"Southwest Effect"},
+  {q:"These structured multi-day flight sequences originate and terminate at a crew's home airport, minimizing hotel expenses while meeting fatigue regulations.",a:"pairings"},
+  {q:"In crew resource management, these monthly work assignments built from individual pairings are allocated to crew members through a bidding or seniority system.",a:"bid lines"},
+  {q:"A pool of qualified crew members held on standby ready to be called into service at short notice to replace colleagues affected by illness or disruptions.",a:"reserve buffer"},
+  {q:"This simplified scheduling pattern assigns pilots routes departing from and returning to the same base within a single duty period, eliminating layover costs.",a:"out-and-back routes"},
+  {q:"This airport selection preference — choosing facilities with lower landing fees over major international gateways — is a hallmark of European ultra-low-cost carriers.",a:"secondary airports"},
+  {q:"This economic concept describes the relationship between fare reductions and passenger volume increases, including the creation of new travelers previously priced out of aviation.",a:"price elasticity"},
+  {q:"This term describes potential travel demand from consumers who would fly if prices were sufficiently low but are currently excluded by high fares.",a:"latent demand"},
+  {q:"This structural arrangement registers separate airline entities in individual countries to comply with local ownership laws while maintaining a unified brand identity.",a:"locally registered subsidiaries"},
+  {q:"This joint commercial arrangement allows a parent group to share branding, systems, and standards with a locally controlled airline partner to circumvent foreign ownership restrictions.",a:"joint ventures"},
+  {q:"This percentage threshold — commonly set at 51% — represents the minimum locally-held ownership stake many Asian governments require before granting an airline domestic operating rights.",a:"majority local control"},
+  {q:"This aircraft configuration featuring a single aisle and typically 100–220 seats is the workhorse of short-haul LCC fleets due to fuel efficiency on sectors under four hours.",a:"narrow-body"},
+  {q:"This wide-cabin aircraft category capable of seating hundreds across twin aisles is deployed by legacy carriers on high-density long-haul routes where LCCs rarely compete.",a:"wide-body"},
+  {q:"This Airbus engine upgrade program designation denotes variants with approximately 20% improved fuel efficiency compared to predecessor models.",a:"NEO"},
+  {q:"This structural lifecycle limit, expressed in pressurization cycles, ultimately determines when an airframe must be retired or subject to costly overhaul inspections.",a:"cycle limit"},
+  {q:"The accelerated wear experienced by LCC aircraft caused by high-frequency takeoff-and-landing sequences in short-sector operations results in this financial consequence.",a:"Accelerated Depreciation"},
+  {q:"This 1978 U.S. legislation dismantled the federal government's authority to set airline prices and route assignments, unleashing competitive forces that allowed Southwest's model to spread nationally.",a:"Airline Deregulation Act"},
+  {q:"This federal regulatory body controlled U.S. interstate airline fares and routes prior to 1978, forcing legacy carriers to charge artificially high prices.",a:"CAB"},
+  {q:"The Texas regulatory body that had jurisdiction over Southwest Airlines during its early intrastate years, before federal deregulation expanded the carrier's reach.",a:"Texas Aeronautics Commission"},
+  {q:"This strategy, in which a large full-service carrier creates a separate low-cost subsidiary to compete with LCCs without cannibalizing its mainline fares.",a:"airlines within-an-airline"},
+  {q:"Southwest Airlines was co-founded by this attorney-turned-executive famous for his unconventional leadership and for building the carrier's low-cost, high-frequency culture.",a:"Herb Kelleher"},
+  {q:"The other co-founder of Southwest Airlines — a businessman who originally sketched the three-city Texas route concept on a cocktail napkin.",a:"Rollin King"},
+  {q:"This Irish-born executive orchestrated Ryanair's transformation from a failing regional carrier into Europe's dominant ultra-low-cost airline after studying the Southwest model.",a:"Michael O'Leary"},
+  {q:"easyJet was founded in 1995 by this 28-year-old entrepreneur, son of a Greek shipping magnate, who aimed to make air travel as affordable as everyday clothing.",a:"Sir Stelios Haji-Ioannou"},
+  {q:"Southwest Airlines began operations in this year, originally offering intrastate service between Dallas, Houston, and San Antonio.",a:"1971"},
+  {q:"Ryanair was originally established in this year by the Ryan family as a conventional full-service regional carrier before pivoting to ultra-low-cost.",a:"1984"},
+  {q:"This airline operations role constructs the published flight timetable, assigns aircraft to routes, and ensures crew rest requirements are embedded into the daily schedule.",a:"scheduling managers"},
+  {q:"This technical planning function oversees the timing of aircraft inspections and maintenance events to ensure airworthiness without unnecessarily grounding revenue flights.",a:"maintenance planners"},
+  {q:"This strategic analytical role evaluates origin-destination passenger demand, competitive fare environments, and fleet deployment options to maximize revenue across the route map.",a:"network analysts"},
+  {q:"This KPI measures the financial return generated per available seat per kilometer flown, allowing analysts to compare route profitability regardless of distance or aircraft size.",a:"passenger yields"},
+  {q:"This phenomenon describes how a small delay in one flight propagates through a tightly scheduled day, causing cascading late departures across multiple subsequent rotations.",a:"domino effect"},
+  {q:"The first of three main strategy pillars, this approach focuses on reducing controllable operating expenses to create a financial buffer against external shocks.",a:"Cost Efficiency"},
+  {q:"The second strategic pillar describes an airline's capacity to redeploy aircraft to different markets rapidly in response to competitive entry or seasonal demand shifts.",a:"Route Flexibility"},
+  {q:"The third strategic pillar determines where aircraft begin their day, how they flow through connections, and how to minimize non-revenue ground time across the entire system.",a:"Network Optimization"},
+  {q:"This bilateral regulatory framework, negotiated between pairs of countries, governs which airlines may operate international routes, frequencies permitted, and airports of service.",a:"bilateral agreements"},
+  {q:"This European airport approximately 60 km north of central London became synonymous with Ryanair's secondary-airport strategy due to its low fees and uncongested runways.",a:"London Stansted"},
+  {q:"Located in Florida, this airport serves as a secondary gateway to the Miami metropolitan area and exemplifies the North American secondary-airport strategy of LCCs.",a:"Fort Lauderdale"},
+  {q:"This easyJet fare tier provides unlimited date changes, a large cabin bag, and a 23 kg hold bag, targeting business travelers who need schedule flexibility.",a:"inclusive Plus"},
+  {q:"easyJet's annual paid membership program granting subscribers dedicated bag-drop access, expedited security lanes, and priority boarding privileges.",a:"EasyJet Plus"},
+  {q:"This describes the competitive market structure where LCCs and full-service legacy carriers compete directly for the same passengers on overlapping routes.",a:"LCC vs FSC"},
+  {q:"This describes flight attendants performing rapid cabin tidying between rotations themselves rather than waiting for a dedicated ground cleaning crew.",a:"quick tidy"},
+  {q:"Boarding passengers simultaneously through both front and rear aircraft doors to halve the time required to fill the cabin.",a:"Simultaneous door operations"},
+  {q:"This describes the airline industry's overall profitability margin in 2026, approximately 3.9% of global industry revenue.",a:"team margin"},
+];
+
+const MTF = [
+  {q:"LCCs typically operate a diverse range of aircraft types to maximize route flexibility across short, medium, and long-haul markets.",correct:false,correction:"LCCs operate a standardized single aircraft type or family to reduce training, maintenance, and parts costs."},
+  {q:"In the LCC hub-and-spoke model, passengers are routed through a central hub airport before continuing to their final destination.",correct:false,correction:"LCCs use point-to-point networks, not hub-and-spoke, flying direct routes between city pairs."},
+  {q:"Block Hours and Cycles are the two primary metrics used in aviation to measure an aircraft's operational age and structural wear.",correct:true,correction:""},
+  {q:"An LCC aircraft flying 10 short sectors per day accumulates more pressurization cycles than a legacy aircraft flying those same 10 hours on a single long-haul route.",correct:true,correction:""},
+  {q:"The Southwest Effect describes the phenomenon whereby Southwest Airlines' entry into a market typically causes fares to rise as competitors upgrade their service.",correct:false,correction:"The Southwest Effect causes fares to drop by 50% or more and passenger volume to double when Southwest enters a market."},
+  {q:"Southwest Airlines was originally classified as an interstate carrier, placing it under the Texas Aeronautics Commission rather than the federal CAB.",correct:false,correction:"Southwest was an intrastate carrier operating only within Texas, which placed it under the Texas Aeronautics Commission — not interstate."},
+  {q:"The Airline Deregulation Act of 1987 eliminated the CAB's authority to set airline prices and routes across the United States.",correct:false,correction:"The Airline Deregulation Act was passed in 1978, not 1987."},
+  {q:"Ancillary revenue refers to the income generated from optional paid services — such as baggage fees and seat upgrades — sold separately from the base ticket fare.",correct:true,correction:""},
+  {q:"Load factor is defined as the ratio of revenue passengers carried to the total number of seats available on a given flight.",correct:true,correction:""},
+  {q:"LCC turnaround times of 25 minutes or less are achieved through sequential task completion, where each ground service task begins only after the previous one finishes.",correct:false,correction:"LCC turnarounds achieve speed through simultaneous task execution — fueling, boarding, cleaning, and loading occur concurrently."},
+  {q:"Legacy carriers typically operate with turnaround times between 45 and 60 minutes due to their multi-class cabin service requirements and complex fleet configurations.",correct:true,correction:""},
+  {q:"Crew pairings are constructed to begin and end at different airports in order to maximize network coverage and reduce positioning costs.",correct:false,correction:"Pairings are designed to start and end at the crew's home base airport to minimize hotel and positioning costs."},
+  {q:"The 'out-and-back' scheduling pattern allows LCC crew to return to their home base within a single duty period, eliminating overnight layover hotel expenses.",correct:true,correction:""},
+  {q:"Price elasticity in aviation demand modeling refers to the inverse relationship between fare levels and passenger volume, including the creation of new travelers previously priced out of flying.",correct:true,correction:""},
+  {q:"Latent demand describes passengers who are already traveling regularly by air but would switch airlines if a lower fare were offered.",correct:false,correction:"Latent demand refers to potential travelers who are NOT currently flying because fares are too high — they represent entirely new market creation when fares fall."},
+  {q:"The NEO designation in Airbus aircraft nomenclature stands for 'New Engine Option' and delivers approximately 20% better fuel efficiency than the preceding generation.",correct:true,correction:""},
+  {q:"Accelerated depreciation in LCC fleets occurs because high-frequency short-sector operations accumulate structural cycles faster, potentially reducing an aircraft's service life from 25 years to 15–18 years.",correct:true,correction:""},
+  {q:"Airlines-within-an-airline strategies launched by legacy carriers in the 1980s and 1990s were widely successful long-term solutions that permanently protected market share from LCC competition.",correct:false,correction:"Almost all AWA ventures failed by the early 2000s due to complexity, high overheads, and brand confusion."},
+  {q:"easyJet was built from its founding as a budget carrier targeting primary major airports, distinguishing it from Ryanair's secondary-airport strategy.",correct:true,correction:""},
+  {q:"The 'inclusive Plus' fare tier offered by easyJet is designed specifically to attract price-sensitive leisure travelers who want the lowest possible base fare.",correct:false,correction:"The 'inclusive Plus' fare targets business travelers who need flexibility features like unlimited date changes, cabin bags, and hold baggage."},
+  {q:"Ryanair was founded in 1995 as a budget carrier from its inception, never operating as a full-service airline.",correct:false,correction:"Ryanair was founded in 1984 as a full-service regional carrier and only pivoted to ultra-low-cost after near-bankruptcy in the early 1990s."},
+  {q:"A reserve buffer in crew scheduling refers to standby crew members who can be deployed on short notice to cover disruptions caused by illness, weather, or mechanical delays.",correct:true,correction:""},
+  {q:"In Asia-Pacific markets, LCC growth is typically unrestricted by foreign ownership laws, allowing international carriers to freely establish wholly-owned subsidiaries in any country.",correct:false,correction:"Asian LCC growth is constrained by bilateral agreements and ownership laws that typically mandate majority local control, commonly set at 51%."},
+  {q:"The three main pillars of airline strategy are Cost Efficiency, Route Flexibility, and Network Optimization.",correct:true,correction:""},
+  {q:"A single-type fleet strategy is universally superior to a diverse fleet strategy because it minimizes training, maintenance, and scheduling complexity across all route types.",correct:false,correction:"There is no universally correct fleet strategy; single-type suits low-cost short-haul models while diverse fleets are necessary for global full-service airlines requiring different aircraft for different routes."},
+  {q:"Network Optimization as a strategic pillar focuses exclusively on maximizing the number of aircraft in an airline's fleet.",correct:false,correction:"Network Optimization focuses on maximizing passengers carried using the fewest aircraft and crew members, by determining where planes start their day and how they flow through the system."},
+  {q:"Turnaround Time is described as a 'pulse-check for an airline's health' because it directly determines aircraft utilization and daily revenue generation capacity.",correct:true,correction:""},
+  {q:"In LCC boarding procedures, simultaneous front-and-rear door boarding is used to increase the time required for passenger loading.",correct:false,correction:"Simultaneous front-and-rear door boarding is used to CUT boarding time in half, not increase it."},
+  {q:"The domino effect in airline scheduling refers to a situation where a single flight delay propagates through subsequent rotations, causing cascading delays across the entire day's operation.",correct:true,correction:""},
+  {q:"Scheduling managers in airline operations are responsible only for assigning aircraft to routes and have no involvement in crew rest management.",correct:false,correction:"Scheduling managers are responsible for constructing timetables AND ensuring crew scheduling incorporates the required 10-hour rest periods between duties."},
+  {q:"The 'cycles vs. hours' maintenance concept can be analogized to comparing city stop-and-go driving (LCC operations) versus smooth highway driving (long-haul operations) in terms of mechanical wear.",correct:true,correction:""},
+  {q:"Cost Efficiency as a strategic pillar aims to reduce all costs including passenger experience quality, making the airline as cheap as possible in every dimension.",correct:false,correction:"Cost Efficiency focuses on minimizing expenses WITHOUT ruining the passenger experience, covering controllable costs like fuel burn and labor productivity."},
+  {q:"Southwest Airlines began as an interstate carrier flying between multiple U.S. states before eventually focusing on Texas-only routes.",correct:false,correction:"Southwest began as an intrastate carrier flying only within Texas between Dallas, Houston, and San Antonio."},
+  {q:"High flight frequency is defined as 6 to 15 flights per day per aircraft on a given route.",correct:true,correction:""},
+  {q:"Long-haul international flights typically exhibit high flight frequency due to the large passenger volumes involved.",correct:false,correction:"Long-haul flights exhibit LOW flight frequency, often 1 per day or 3–5 per week, because the journey duration limits the number of rotations possible."},
+  {q:"Air Asia's joint venture and locally registered subsidiary model adds administrative complexity but is essential for cross-border expansion under Asian ownership regulations.",correct:true,correction:""},
+  {q:"Michael O'Leary founded Ryanair in 1984 and immediately applied the Southwest Airlines low-cost model from the airline's first year of operations.",correct:false,correction:"Michael O'Leary was an executive who applied the Southwest model after Ryanair's near-bankruptcy in the early 1990s; Tony Ryan and the Ryan family founded the airline in 1984."},
+  {q:"The 'airline within an airline' concept failed largely because sub-brands struggled with complexity, high overhead costs, and brand confusion.",correct:true,correction:""},
+  {q:"Passenger yields measure financial return per available seat per kilometer, used to compare route profitability across different distances and aircraft sizes.",correct:true,correction:""},
+  {q:"The global airline industry profit margin for 2026 was cited as approximately 15%, reflecting strong post-pandemic recovery.",correct:false,correction:"The lecture notes cite the 2026 global industry profit margin at approximately 3.9%, indicating a surprisingly thin margin despite the scale of operations."},
+  {q:"easyJet Plus is a per-flight upgrade option that can be purchased at the gate for a one-time boarding priority fee.",correct:false,correction:"EasyJet Plus is an annual subscription-based loyalty program priced above $200 per year, providing year-round perks rather than single-flight upgrades."},
+  {q:"Bilateral agreements between countries determine which airlines may operate international routes, the number of permitted frequencies, and the designated airports of service.",correct:true,correction:""},
+  {q:"In LCC ground operations, flight attendants often perform a 'quick tidy' of the cabin themselves to avoid waiting for a dedicated ground cleaning crew.",correct:true,correction:""},
+  {q:"The 'Southwest Effect' was a term coined by Southwest Airlines' own marketing department to describe the benefits of their route expansion strategy.",correct:false,correction:"The Southwest Effect is an observed market phenomenon — not a marketing term — describing the competitive and demand impacts when Southwest enters a new route."},
+  {q:"Majority local control requirements commonly mandate that 51% of an airline's ownership must be held by citizens or entities of the country in which the airline operates.",correct:true,correction:""},
+  {q:"Fuel costs represent approximately 20% of airline operating costs, making fuel price volatility a significant factor in airline financial planning.",correct:true,correction:""},
+  {q:"Network analysts are primarily responsible for aircraft maintenance scheduling and ensuring airworthiness certificates are renewed on time.",correct:false,correction:"Network analysts are strategic thinkers responsible for evaluating route revenue, origin-destination demand, and fleet deployment — not maintenance scheduling."},
+  {q:"Fort Lauderdale serves as a primary hub airport for major legacy carriers connecting to Latin American destinations.",correct:false,correction:"Fort Lauderdale is cited as an example of a North American secondary airport used by LCCs to achieve lower fees and faster turnarounds."},
+  {q:"London Stansted is used by Ryanair as a primary example of the secondary-airport LCC strategy in Europe.",correct:true,correction:""},
+  {q:"Wide-body aircraft are primarily used by LCCs on their highest-frequency short-haul routes to maximize seat capacity per flight.",correct:false,correction:"Wide-body aircraft are used by legacy carriers on high-density long-haul routes; LCCs predominantly use narrow-body aircraft."},
+  {q:"Maintenance planners are responsible for timing aircraft inspections to maintain airworthiness without unnecessarily grounding revenue-generating flights.",correct:true,correction:""},
+];
+
+const WORDBANK = [
+  {q:"LCCs typically standardize on a __________ fleet, meaning all aircraft belong to the same type or family.",a:"single-type",bank:["single-type","diverse","wide-body","legacy","hybrid"]},
+  {q:"Rather than routing passengers through a central hub, LCCs prefer __________ networks that connect city pairs directly.",a:"point-to-point",bank:["point-to-point","hub-and-spoke","radial","feeder","bilateral"]},
+  {q:"The time an aircraft spends on the ground between arriving at a gate and departing again is called __________.",a:"turnaround time",bank:["turnaround time","block hours","duty period","cycle limit","ground delay"]},
+  {q:"LCCs generate additional income beyond ticket sales through __________ revenue from services like baggage fees and seat selection.",a:"ancillary",bank:["ancillary","base","latent","bilateral","yield"]},
+  {q:"The practice of selling ticket prices separately from optional services like meals and luggage is called __________ fares.",a:"unbundled",bank:["unbundled","bundled","flexi","dynamic","promotional"]},
+  {q:"The percentage of seats occupied by paying passengers on a flight is called the __________.",a:"load factor",bank:["load factor","block hours","cycle limit","ancillary revenue","yield"]},
+  {q:"Total airborne time accumulated by an aircraft is measured in __________.",a:"block hours",bank:["block hours","cycles","sectors","pairings","rotations"]},
+  {q:"Each complete takeoff-and-landing sequence counts as one __________, accumulated rapidly by LCC aircraft on short-sector operations.",a:"cycle",bank:["cycle","sector","pairing","block hour","rotation"]},
+  {q:"The market phenomenon where a low-cost carrier's route entry causes fares to drop 50% and passenger volume to double is called the __________.",a:"Southwest Effect",bank:["Southwest Effect","LCC Effect","Deregulation Boom","Price Elasticity","Domino Effect"]},
+  {q:"The economic principle that lower prices attract existing travelers AND create entirely new ones is called __________.",a:"price elasticity",bank:["price elasticity","latent demand","yield management","load factor","ancillary revenue"]},
+  {q:"Passengers who would fly if prices were sufficiently reduced but are currently excluded by high fares represent __________.",a:"latent demand",bank:["latent demand","price elasticity","business travelers","legacy passengers","LCC customers"]},
+  {q:"Multi-day flight sequences that start and end at a crew's home base are called __________.",a:"pairings",bank:["pairings","bid lines","rotations","sectors","duty periods"]},
+  {q:"Monthly work schedules built from individual pairings and distributed to crew members are called __________ or rosters.",a:"bid lines",bank:["bid lines","pairings","reserve buffers","sectors","turnarounds"]},
+  {q:"Standby crew members held ready to replace colleagues on short notice are known as the __________.",a:"reserve buffer",bank:["reserve buffer","bid lines","pairings","ground crew","duty roster"]},
+  {q:"LCC crew scheduling that assigns pilots routes returning to their home base within one duty period is called the __________ pattern.",a:"out-and-back",bank:["out-and-back","hub-and-spoke","pairing","rotating","bilateral"]},
+  {q:"LCCs in Europe favor __________ airports like London Stansted to minimize landing fees and avoid congestion.",a:"secondary",bank:["secondary","primary","hub","international","legacy"]},
+  {q:"AirAsia uses __________ in individual countries to comply with local ownership rules.",a:"locally registered subsidiaries",bank:["locally registered subsidiaries","joint ventures","bilateral agreements","decentralized hubs","AWAs"]},
+  {q:"Most Asian countries require __________ local ownership — commonly 51% — before granting domestic operating rights.",a:"majority local control",bank:["majority local control","bilateral agreements","joint ventures","secondary airports","price elasticity"]},
+  {q:"Country-to-country agreements governing which airlines may fly international routes and how frequently are called __________.",a:"bilateral agreements",bank:["bilateral agreements","locally registered subsidiaries","joint ventures","majority local control","pairings"]},
+  {q:"The Airbus engine upgrade designation delivering approximately 20% fuel efficiency improvement over previous models is called __________.",a:"NEO",bank:["NEO","AWA","CAB","TAC","LCC"]},
+  {q:"An aircraft's structural retirement is determined by its __________, the maximum number of pressurization cycles it can safely complete.",a:"cycle limit",bank:["cycle limit","block hours","load factor","turnaround time","pairing"]},
+  {q:"When short-sector operations cause an aircraft to wear out years earlier than expected, this financial effect is called __________.",a:"accelerated depreciation",bank:["accelerated depreciation","ancillary revenue","cycle limit","load factor","price elasticity"]},
+  {q:"The 1978 U.S. legislation that eliminated federal control over airline prices and routes is called the __________.",a:"Airline Deregulation Act",bank:["Airline Deregulation Act","Civil Aviation Bill","Southwest Act","Texas Aviation Law","CAB Reform Act"]},
+  {q:"The federal body that regulated U.S. interstate airline fares before deregulation was the __________.",a:"CAB",bank:["CAB","TAC","FAA","IATA","DOT"]},
+  {q:"Southwest's early regulatory overseer within Texas was the __________ rather than the federal CAB.",a:"Texas Aeronautics Commission",bank:["Texas Aeronautics Commission","Federal Aviation Board","Civil Aeronautics Board","Southwest Authority","Transport Regulatory Body"]},
+  {q:"Legacy carriers' attempts to compete with Southwest by creating low-cost sub-brands were called __________ strategies.",a:"airlines within-an-airline",bank:["airlines within-an-airline","point-to-point","hub-and-spoke","bilateral","out-and-back"]},
+  {q:"The first strategic pillar focused on reducing controllable costs to protect profitability is called __________.",a:"cost efficiency",bank:["cost efficiency","route flexibility","network optimization","ancillary revenue","load factor"]},
+  {q:"The second strategic pillar — the ability to rapidly redeploy aircraft in response to market changes — is called __________.",a:"route flexibility",bank:["route flexibility","cost efficiency","network optimization","ancillary revenue","bilateral agreements"]},
+  {q:"The third strategic pillar — determining where planes start their day and how they minimize ground time — is called __________.",a:"network optimization",bank:["network optimization","cost efficiency","route flexibility","turnaround discipline","fleet simplification"]},
+  {q:"An airline using only Boeing 737s for its entire operations is following a __________ fleet strategy.",a:"single-type",bank:["single-type","diverse","hybrid","wide-body","legacy"]},
+  {q:"A global full-service carrier deploying narrow-body, wide-body, and regional jets for different route types is following a __________ fleet strategy.",a:"diverse fleet",bank:["diverse fleet","single-type fleet","standardized fleet","LCC fleet","NEO fleet"]},
+  {q:"The financial income generated per unit of capacity per kilometer, used to compare route profitability, is called __________.",a:"passenger yields",bank:["passenger yields","load factor","ancillary revenue","block hours","cycle limit"]},
+  {q:"When one flight's delay cascades into subsequent delays throughout the day's schedule, this is called the __________ in airline operations.",a:"domino effect",bank:["domino effect","Southwest Effect","price elasticity","latent demand","turnaround time"]},
+  {q:"easyJet's annual paid membership offering priority boarding, bag drop, and fast-track security is called __________.",a:"easyJet Plus",bank:["easyJet Plus","inclusive Plus","flexi fare","priority pass","business tier"]},
+  {q:"easyJet's fare tier including unlimited date changes, a cabin bag, and a 23 kg hold bag targeting business travelers is called __________.",a:"inclusive Plus",bank:["inclusive Plus","easyJet Plus","flexi fare","business bundle","ancillary package"]},
+  {q:"Ryanair standardized its fleet exclusively to __________ aircraft, eliminating training complexity of mixed fleet types.",a:"Boeing 737s",bank:["Boeing 737s","Airbus A320s","A321 NEO","A380s","Boeing 787s"]},
+  {q:"The thin profitability margin in aviation described in the lecture as the __________ emphasizes how little airlines actually take home.",a:"team margin",bank:["team margin","load factor","yield spread","cost cushion","ancillary gap"]},
+  {q:"Boarding passengers through both front and rear doors simultaneously to halve boarding time is called __________ in LCC turnaround operations.",a:"simultaneous door operations",bank:["simultaneous door operations","sequential loading","single-aisle boarding","gate-ready approach","quick tidy"]},
+  {q:"When LCC flight attendants clean the cabin themselves between rotations instead of calling a cleaning crew, this is called a __________.",a:"quick tidy",bank:["quick tidy","turnaround clean","cabin reset","ground service","boarding prep"]},
+  {q:"The airport is described as an airline's metaphorical __________, with the critical distinction that airlines rent rather than own it.",a:"factory",bank:["factory","hub","base","terminal","depot"]},
+  {q:"Fuel costs represent approximately __________ percent of airline operating costs.",a:"20",bank:["20","5","35","50","10"]},
+  {q:"Southwest Airlines was originally an __________ carrier, meaning it only flew routes within the state of Texas.",a:"intrastate",bank:["intrastate","interstate","international","regional","charter"]},
+  {q:"High flight frequency is defined as __________ flights per day per aircraft on a given route.",a:"6 to 15",bank:["6 to 15","1 to 3","20 to 30","3 to 5","10 to 20"]},
+  {q:"Ryanair's pivot from near-bankruptcy was led by executive __________ after studying the Southwest Airlines model.",a:"Michael O'Leary",bank:["Michael O'Leary","Herb Kelleher","Rollin King","Sir Stelios","Tony Ryan"]},
+  {q:"easyJet's founder Sir Stelios Haji-Ioannou was only __________ years old when he started the airline in 1995.",a:"28",bank:["28","22","35","30","25"]},
+  {q:"Southwest co-founder __________ is famous for his unconventional leadership and building the low-cost, high-frequency culture.",a:"Herb Kelleher",bank:["Herb Kelleher","Rollin King","Michael O'Leary","Tony Ryan","Sir Stelios"]},
+  {q:"The Airbus A321 __________ is cited as an example of a highly fuel-efficient aircraft suitable for LCC operations management.",a:"NEO",bank:["NEO","XLR","CEO","LR","AWA"]},
+  {q:"The lecture describes LCC aircraft as the 'city drivers of the sky' because they experience intense __________ stress due to frequent pressurization and depressurization.",a:"structural",bank:["structural","aerodynamic","hydraulic","thermal","electrical"]},
+  {q:"When AirAsia enters a new Asian country market, it typically forms __________ with local partners to comply with 51% ownership requirements.",a:"joint ventures",bank:["joint ventures","bilateral agreements","AWAs","pairings","secondary airports"]},
+  {q:"The practice of advertising a very low ticket price while charging separately for all additional services is called selling __________ fares.",a:"unbundled",bank:["unbundled","bundled","premium","dynamic","flexi"]},
+];
+
+const MC = [
+  {q:"Which of the following BEST distinguishes an LCC's fleet strategy from a legacy carrier's?",options:["LCCs operate exclusively wide-body aircraft on all routes","LCCs standardize on one or two aircraft types to reduce training and maintenance complexity","LCCs maintain the most diverse fleet possible to serve all market segments","LCCs lease aircraft from legacy carriers to reduce capital expenditure"],a:1},
+  {q:"What is the PRIMARY financial advantage of fast aircraft turnaround times in the LCC model?",options:["It reduces crew wages by shortening duty periods","It allows aircraft to generate more revenue cycles per day without purchasing additional planes","It lowers fuel costs by reducing time spent idling at gates","It eliminates the need for a reserve crew buffer"],a:1},
+  {q:"What exactly happens to an aircraft's metal structure during pressurization and depressurization cycles?",options:["The fuel tanks expand due to temperature changes","The cabin air pressure causes the aircraft skin to stretch and contract like a balloon","The avionics systems reboot to manage atmospheric pressure shifts","The hydraulic systems overheat from repeated compression cycles"],a:1},
+  {q:"Why was Southwest Airlines able to charge $20 when competitors were forced to charge $60 during its early Texas operations?",options:["Southwest received government subsidies that artificially lowered its fares","Southwest was exempt from fuel taxes within Texas state borders","Southwest operated outside the CAB's jurisdiction as an intrastate carrier and was not bound by federally mandated fare floors","Southwest used older aircraft with lower operating costs than legacy competitors"],a:2},
+  {q:"What was the fundamental reason almost all Airlines-Within-An-Airline ventures failed by the early 2000s?",options:["Government regulations forced legacy carriers to shut down their sub-brands","They faced competition from AirAsia's Asian expansion into U.S. markets","They struggled with operational complexity, high overhead costs, and passenger brand confusion","Southwest Airlines filed legal challenges that forced the sub-brands to cease operations"],a:2},
+  {q:"Which of the following MOST accurately defines 'load factor' in aviation?",options:["The weight of cargo and baggage loaded onto an aircraft per flight","The ratio of revenue passengers carried to total seats available","The number of takeoff-and-landing cycles completed in one day","The proportion of ancillary revenue to total ticket revenue"],a:1},
+  {q:"Which statement BEST explains why AirAsia registers separate subsidiary companies in countries like Thailand and Indonesia?",options:["To avoid paying international corporate taxes in Malaysia","To access cheaper labor markets unavailable under Malaysian employment law","To comply with local ownership laws that require majority domestic control of airlines","To reduce branding costs by registering intellectual property in lower-cost jurisdictions"],a:2},
+  {q:"How does the NEO engine upgrade designation affect LCC fleet economics?",options:["It extends the aircraft's maximum cycle limit, delaying replacement costs","It delivers approximately 20% fuel efficiency improvement, reducing the largest single operating expense","It simplifies maintenance by eliminating hydraulic systems from the engine design","It allows the aircraft to fly longer routes, opening new LCC market opportunities"],a:1},
+  {q:"What is the CRITICAL difference between how LCCs and legacy carriers achieve their ground operations during turnaround?",options:["LCCs use more staff per aircraft to complete tasks faster","LCCs execute multiple tasks simultaneously; legacy carriers perform tasks sequentially","LCCs rely exclusively on automated systems while legacy carriers use manual processes","LCCs perform no cleaning between flights while legacy carriers conduct thorough deep cleans"],a:1},
+  {q:"Which of the following scenarios MOST accurately illustrates the concept of 'latent demand'?",options:["A frequent business traveler who switches from Business Class to Economy after an LCC enters the market","A person who has never flown before but begins traveling after LCC fares drop below $30","An LCC customer who books ancillary upgrades after purchasing a base ticket","A legacy carrier passenger who defects to an LCC competitor on an overlapping route"],a:1},
+  {q:"Why do legacy carriers typically have turnaround times of 45–60 minutes compared to LCC 25-minute windows?",options:["Legacy carriers use larger aircraft that physically require more time to fuel and load","Legacy carriers must service multiple cabin classes with different catering, seating configurations, and amenity requirements","Legacy carriers are regulated to maintain longer ground times for safety inspections","Legacy carriers operate at secondary airports with less efficient ground handling equipment"],a:1},
+  {q:"What is the STRATEGIC purpose of the 'out-and-back' crew scheduling pattern used by LCCs?",options:["It maximizes the number of cities a single crew can serve within a 30-day roster period","It eliminates overnight hotel costs by ensuring crew return to their home base within a single duty period","It allows crew to accumulate more flight hours per month, increasing their earnings","It simplifies reserve buffer management by concentrating all standby crew at hub airports"],a:1},
+  {q:"The 'Southwest Effect' most precisely describes which outcome?",options:["Southwest's operational model causing competing airlines to adopt identical fleet strategies","The market response to Southwest entering a route — fares dropping ~50% and passenger volume approximately doubling","Southwest's lobbying efforts leading to the Airline Deregulation Act of 1978","The negative financial impact on airports when Southwest discontinues a route"],a:1},
+  {q:"What does 'price elasticity' specifically refer to in LCC demand modeling?",options:["The flexibility LCCs have in changing their base fares without regulatory approval","The relationship between fare reductions and passenger volume increases, including creation of entirely new travelers","The ability of ancillary revenue to compensate for base fare reductions","The rate at which competitors match an LCC's fare reduction in a contested market"],a:1},
+  {q:"Which of the following BEST explains why an LCC aircraft performing 10 short sectors per day creates more maintenance burden than a legacy aircraft flying 10 hours non-stop?",options:["Short-sector flights burn more fuel per hour, causing faster engine wear","Each sector involves one pressurization-depressurization cycle, stressing the airframe structurally regardless of flight duration","LCC aircraft have fewer maintenance staff assigned per aircraft","Short-sector flights accumulate more block hours per calendar year than long-haul operations"],a:1},
+  {q:"Which of the following is NOT cited as a key LCC cost-reduction strategy?",options:["Fleet Simplification","Turnaround Discipline","Frequent Flyer Loyalty Programs","Direct Sales"],a:2},
+  {q:"What was Southwest Airlines' legal strategy for avoiding CAB regulation during its founding years?",options:["It registered as a private charter operator, exempting it from public airline regulations","It operated exclusively within Texas state borders, making it an intrastate carrier outside the CAB's federal jurisdiction","It formed a joint venture with a Texas-based railroad, qualifying as a surface transportation company","It claimed military charter status under Texas defense contracts"],a:1},
+  {q:"Which statement MOST accurately describes the trade-off inherent in a diverse fleet strategy?",options:["Diverse fleets are always financially superior because they maximize revenue on every route type","Diverse fleets sacrifice cost efficiency and scheduling simplicity in exchange for optimal aircraft-route matching","Diverse fleets eliminate the need for a reserve buffer because crews are trained on all aircraft types","Diverse fleets reduce maintenance costs because high-utilization components are shared across aircraft types"],a:1},
+  {q:"What does the lecture identify as the 'factory' of an airline, with the important caveat that airlines only rent it?",options:["The aircraft maintenance hangar","The airport","The reservation and booking platform","The crew training facility"],a:1},
+  {q:"Which of the following BEST describes the role of 'network analysts' in airline operations management?",options:["They manage daily crew scheduling ensuring pairings comply with fatigue regulations","They oversee aircraft maintenance intervals and certify airworthiness of the fleet","They evaluate origin-destination demand, competitive fare environments, and fleet deployment to maximize route revenue","They negotiate bilateral agreements with foreign governments to secure new international routes"],a:2},
+  {q:"How did easyJet's initial marketing strategy fundamentally differ from traditional airline distribution?",options:["easyJet partnered exclusively with online travel agents to reduce advertising costs","easyJet printed its booking number and website directly on its aircraft, bypassing travel agent commissions entirely","easyJet focused on corporate travel management companies to build early brand awareness","easyJet operated a cashless operation at airports, forcing digital-only transactions"],a:1},
+  {q:"Which of the following correctly identifies WHY Ryanair chose secondary airports as a core strategic element?",options:["Secondary airports offered newer terminal facilities with better passenger experience","Secondary airports were strategically located closer to city centers in the UK and Ireland","Secondary airports offered lower landing fees and congestion-free environments enabling high-speed turnarounds","Secondary airports were required under EU regulations for carriers on intra-European routes"],a:2},
+  {q:"What is the PRIMARY reason that LCC crew scheduling is described as a 'complex logistics puzzle'?",options:["LCCs employ more crew per aircraft than legacy carriers due to higher utilization rates","Scheduling must simultaneously satisfy safety regulations, cost efficiency, union contracts, aircraft qualifications, and disruption resilience","LCC routes are more geographically dispersed than legacy carrier hubs","LCC crew contracts require monthly renegotiation based on route performance metrics"],a:1},
+  {q:"What specific operational metric does the lecture identify as the 'pulse-check for an airline's health'?",options:["Load Factor","Block Hours","Turnaround Time","Cycle Count"],a:2},
+  {q:"Which of the following MOST accurately characterizes the financial logic of the LCC model?",options:["Charging premium fares on a small number of high-demand routes to maximize revenue per seat","Carrying more passengers at lower fares by maximizing efficiency in every part of the business","Reducing aircraft quality to minimize capital expenditure and operational complexity","Eliminating ancillary services entirely to offer the absolute lowest possible all-in fare"],a:1},
+  {q:"What was the FOUNDING motivation for AirAsia and Cebu Pacific's expansion in Asia-Pacific?",options:["To compete on long-haul routes where legacy carriers dominated","To capitalize on unmet point-to-point demand by legacy carriers in archipelago markets with rising middle-class consumers","To replace legacy carriers on existing hub-and-spoke networks with a lower-cost alternative","To leverage bilateral agreements that restricted legacy carrier frequency on key routes"],a:1},
+  {q:"Which of the following statements about the 'EasyJet Plus' membership is CORRECT?",options:["It is a per-flight fee added during booking that provides priority boarding for one journey","It is an annual subscription program providing dedicated bag drop, fast-track security, and Speedy Boarding","It is equivalent to easyJet's 'inclusive Plus' fare, bundling flexibility features with the ticket price","It is a credit card co-branded product offering lounge access at primary airports"],a:1},
+  {q:"What does the lecture mean when it states LCC components like tires and brakes have a higher 'cost per flight hour'?",options:["LCC aircraft use premium-grade materials that cost more per unit","The high frequency of landings accelerates wear, requiring more frequent replacement","LCC maintenance contracts include higher labor rates due to union agreements","LCC aircraft are subject to stricter airworthiness standards requiring replacement at lower threshold intervals"],a:1},
+  {q:"The lecture describes three main pillars of airline strategy. Which combination is CORRECT?",options:["Cost Efficiency, Hub Optimization, Fleet Modernization","Revenue Maximization, Route Flexibility, Crew Scheduling","Cost Efficiency, Route Flexibility, Network Optimization","Fleet Simplification, Ancillary Revenue, Direct Sales"],a:2},
+  {q:"According to the lecture, what MOST accurately describes a 'reserve buffer' in airline crew scheduling?",options:["A financial reserve maintained to cover unexpected maintenance costs","A scheduling buffer of empty time built into each flight rotation to absorb minor delays","A pool of standby crew members ready to be deployed on short notice to cover disruptions","An excess fuel load carried on each flight to account for unanticipated route diversions"],a:2},
+  {q:"What does the lecture identify as a key limitation of the single-type fleet strategy?",options:["Single-type fleets require more maintenance staff than diverse fleets","Single-type fleets cannot easily serve long-haul international routes or low-demand thin routes","Single-type fleets cannot comply with bilateral agreement requirements for fleet diversity","Single-type fleets have higher per-seat fuel costs than diverse fleet alternatives"],a:1},
+  {q:"How does the lecture characterize the relationship between aircraft utilization and accelerated depreciation in the LCC context?",options:["Higher utilization reduces depreciation by spreading fixed costs over more revenue cycles","Higher utilization extends the aircraft's effective service life by keeping systems active","Higher utilization causes faster cycle accumulation, potentially reducing aircraft service life from 25 years to 15–18 years","Depreciation is unrelated to utilization in aviation accounting; it is set by manufacturers at delivery"],a:2},
+  {q:"The lecture's analogy of city stop-and-go driving versus highway driving explains which concept?",options:["The difference in fuel consumption between LCC narrow-body and legacy wide-body aircraft","How LCC aircraft accumulate wear faster than long-haul aircraft due to frequent pressurization cycles","Why secondary airports create more traffic congestion than primary hub airports","The financial difference between variable and fixed costs in airline operations"],a:1},
+  {q:"What is the CRITICAL distinction between 'bilateral agreements' and 'local ownership requirements' as regulatory challenges for LCC expansion in Asia?",options:["Bilateral agreements control domestic routes while ownership requirements govern international operations","Bilateral agreements govern which airlines may operate international routes and at what frequencies; ownership requirements mandate minimum local shareholding for domestic operations","Bilateral agreements apply only to cargo operations while ownership requirements affect passenger airlines exclusively","Both terms describe the same regulatory framework applied at different administrative levels"],a:1},
+  {q:"What does the lecture identify as the MAIN reason AWAS ventures launched by legacy carriers ultimately failed?",options:["The sub-brands were unable to match LCC fares because fuel hedging contracts prevented cost reduction","They struggled with complexity, high overhead costs, and brand confusion among passengers","Government regulators forced them to maintain legacy carrier service standards","Southwest Airlines' rapid market expansion outpaced the sub-brands' ability to develop new routes"],a:1},
+  {q:"Which of the following BEST describes the 'Network Optimization' pillar of airline strategy?",options:["Negotiating with fuel suppliers to secure long-term contracts at favorable prices","The big-picture strategy of deciding where planes start each day, managing hub connections, and minimizing non-revenue ground time","Optimizing in-flight wifi and entertainment networks to improve passenger experience scores","Building codeshare agreements with partner airlines to extend the network without adding aircraft"],a:1},
+  {q:"The lecture states that easyJet runs multiple daily flights on routes like London to Amsterdam to capture which specific market segment?",options:["Budget leisure travelers seeking the lowest absolute fare","Business travelers who need to fly out in the morning and return the same evening","Transit passengers connecting between European and intercontinental services","Cargo customers requiring next-day delivery between financial centers"],a:1},
+  {q:"Which founding year and co-founders are CORRECTLY matched for Southwest Airlines?",options:["1971 — Herb Kelleher and Michael O'Leary","1978 — Rollin King and Tony Ryan","1971 — Rollin King and Herb Kelleher","1984 — Sir Stelios Haji-Ioannou and Herb Kelleher"],a:2},
+  {q:"What does the lecture mean by describing AirAsia's decentralized subsidiary structure as 'essential for cross-border expansion' despite adding 'administrative weight'?",options:["It allows AirAsia to avoid corporate taxes in multiple Asian jurisdictions through transfer pricing","It enables AirAsia to maintain a unified brand while complying with national ownership laws and securing local traffic rights and market knowledge","It is required under ICAO regulations for airlines operating in more than three countries simultaneously","It provides legal protection for AirAsia's parent company in Malaysia against liability from accidents in subsidiary markets"],a:1},
+  {q:"Which of the following CORRECTLY identifies what happens FIRST in the sequence of an LCC 25-minute turnaround?",options:["Ground Service begins immediately as the aircraft taxis to gate","Passenger Deplaning begins once doors open upon chocks being placed","Fueling commences simultaneously with aircraft taxi to prevent time loss","Boarding begins at the rear door while the front door handles deplaning"],a:1},
+  {q:"Why does the lecture emphasize that a pilot's understanding of turnaround times and fuel planning 'affects the airline's bottom line'?",options:["Pilots can directly negotiate fuel supplier contracts if they demonstrate technical knowledge","Pilots who understand operational efficiency can make in-cockpit decisions that save 5 minutes per flight, generating significant cumulative financial value","Pilots with business knowledge can be promoted faster, reducing the airline's training pipeline costs","Understanding bottom-line impacts allows pilots to request higher pay through union grievance processes"],a:1},
+  {q:"Which of the following accurately describes the competitive environment in the Asia-Pacific LCC sector?",options:["The Asia-Pacific market is relatively uncompetitive due to restrictive bilateral agreements protecting established incumbents","Rapid economic growth and a rising middle class fueled an LCC boom, with dominant players exploiting unmet demand for direct city-pair connections","Asia-Pacific LCCs compete primarily by offering hub-and-spoke connectivity that legacy carriers have failed to develop","The Asia-Pacific market is dominated by a single carrier with no meaningful competition from regional players"],a:1},
+  {q:"According to the lecture, what is the specific consequence of LCC aircraft accumulating high cycles per day on maintenance planning?",options:["Maintenance intervals must be extended because cycles create less wear than flight hours on modern aircraft","Maintenance teams must inspect landing gear, tires, brakes, and structural integrity more frequently regardless of total block hours","Cycle accumulation automatically triggers mandatory manufacturer recall campaigns for structural inspections","High-cycle operations reduce insurance premiums because the aircraft remains in better condition through regular use"],a:1},
+  {q:"What was the POLITICAL and STRATEGIC significance of Southwest Airlines being classified as an 'intrastate' carrier in its early years?",options:["Intrastate status allowed Southwest to operate internationally under Texas state treaties with Mexico","Intrastate classification placed Southwest under the Texas Aeronautics Commission's jurisdiction rather than the federal CAB, allowing free pricing that proved the LCC model was viable before deregulation","Intrastate status exempted Southwest from aircraft airworthiness requirements, reducing maintenance costs","Intrastate classification gave Southwest preferential gate access at Texas airports under state transportation policy"],a:1},
+  {q:"What does the lecture identify as the SPECIFIC economic benefit to local communities when an LCC enters a market?",options:["LCC operations reduce airport infrastructure costs, allowing governments to redirect spending to other sectors","LCC market entry generates direct airport revenues, local tourism increases, business connectivity improvements, job creation, and wider economic spillovers","LCC presence reduces property values near airports through increased noise pollution but offsets this through employment creation","LCC entry primarily benefits airline shareholders through higher stock valuations with minimal local community impact"],a:1},
+  {q:"What does the 'inclusive Plus' fare tier of easyJet include that directly addresses the needs of business travelers?",options:["A refundable fare with same-day rebooking rights and a first-class seat upgrade voucher","Unlimited date changes, a large cabin bag, and a 23 kg hold bag for travelers whose plans may shift","Priority immigration processing and a dedicated lounge at London Heathrow","A subscription to easyJet Plus membership bundled with the fare purchase"],a:1},
+  {q:"The lecture identifies 'scheduling managers' as the 'architects of the timetable.' Which ADDITIONAL responsibility is attributed to this role?",options:["Negotiating aircraft lease agreements with manufacturers","Ensuring crew scheduling incorporates 10-hour rest requirements between duties","Managing the airline's ancillary revenue pricing strategy","Overseeing bilateral agreement negotiations with foreign civil aviation authorities"],a:1},
+  {q:"How does the lecture explain Ryanair's transformation from a struggling regional carrier to Europe's dominant ultra-low-cost airline?",options:["Ryanair merged with easyJet in the early 1990s, combining resources to achieve scale","After near-bankruptcy, executive Michael O'Leary studied Southwest's model, standardized the fleet to Boeing 737s, stripped all luxury, and moved to secondary airports","Ryanair received significant EU structural funds that allowed it to undercut competitors on fares during the critical growth phase","Ryanair's transformation was driven by the Open Skies Agreement that eliminated bilateral restrictions across Europe"],a:1},
+  {q:"The lecture describes 'bid lines' as part of LCC crew scheduling. What MOST accurately describes this concept?",options:["Monthly flight routes submitted by individual pilots for bidding at fare auctions to external charter clients","Monthly work schedules built from individual pairings and assigned to crew, often through AI-driven software matching preferences with regulatory requirements","Weekly bidding rounds where crew members compete for reserve buffer positions based on seniority","Annual contract negotiations where crew unions bid for collective pay increases based on operational performance metrics"],a:1},
+  {q:"Why does the lecture describe the LCC model as creating a 'low cost structure' rather than a 'low value product'?",options:["Because LCCs invest cost savings directly into improving in-flight entertainment and catering quality","Because passengers trade bundled frills for transparent low base fares and optional paid services, not a degraded core flying experience","Because LCCs operate newer aircraft than legacy carriers, providing better reliability despite the lower price point","Because the term 'low value' is legally prohibited in airline advertising regulations in most markets"],a:1},
+  {q:"What does the lecture identify as the SPECIFIC reason the 25-minute LCC turnaround requires tasks to be executed 'to the minute'?",options:["Aviation safety regulations mandate that any turnaround exceeding 25 minutes requires an additional safety inspection","Any small delay in one task triggers a domino effect that cascades across the entire day's schedule due to the tight operational sequence","Airport slot regulations impose financial penalties for any departure more than 3 minutes late at secondary airports","Crew fatigue regulations require a minimum 30-minute rest break between landing and the next departure"],a:1},
+  {q:"According to the lecture, what distinguishes how easyJet positions itself compared to Ryanair?",options:["easyJet positions itself as a pure ultra-low-cost carrier targeting only price-sensitive leisure travelers, while Ryanair pursues a hybrid model","easyJet uses a hybrid 'value-and-convenience' model targeting primary airports and business travelers, while Ryanair pursues a pure ultra-low-cost secondary-airport approach","Both airlines use identical hybrid models but apply them in different geographic markets","easyJet focuses exclusively on cargo revenue while Ryanair earns predominantly through passenger ancillary fees"],a:1},
+];
+
+// =====================================================================
+// STATE
+// =====================================================================
+const SECTIONS = [
+  {id:"identification",label:"Identification",data:IDENTIFICATION,color:"#e74c3c",part:"Part I"},
+  {id:"mtf",label:"Modified True or False",data:MTF,color:"#3498db",part:"Part II"},
+  {id:"wordbank",label:"Word Bank",data:WORDBANK,color:"#27ae60",part:"Part III"},
+  {id:"mc",label:"Multiple Choice",data:MC,color:"#9b59b6",part:"Part IV"},
+];
+
+let state = {
+  section: null,
+  questions: [],
+  current: 0,
+  answers: {},
+  revealed: {},
+  timer: 0,
+  timerInterval: null,
+  score: 0,
+};
+
+// =====================================================================
+// UTILS
+// =====================================================================
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function fmt(s){return`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+
+// =====================================================================
+// HOME
+// =====================================================================
+function buildHome() {
+  const grid = document.getElementById("cardsGrid");
+  grid.innerHTML = "";
+  SECTIONS.forEach(sec => {
+    const descs = {
+      identification:"Write the exact term that matches the rephrased description. No hints. Memory only.",
+      mtf:"Determine if each statement is TRUE or FALSE. If false, get instant correction.",
+      wordbank:"Select the correct term from the provided word bank. Distractors are plausible — read carefully.",
+      mc:"Four options, one correct. Wrong answers are strategically designed to be convincing."
+    };
+    const div = document.createElement("div");
+    div.className = "sec-card";
+    div.style.border = `1px solid ${sec.color}44`;
+    div.innerHTML = `
+      <div class="card-bar" style="background:linear-gradient(90deg,${sec.color},transparent)"></div>
+      <div class="card-part" style="color:${sec.color}">${sec.part}</div>
+      <div class="card-title">${sec.label}</div>
+      <div class="card-desc">${descs[sec.id]}</div>
+      <div class="card-footer">
+        <span class="card-count">100 randomized questions</span>
+        <button class="card-btn" style="background:${sec.color}" onclick="startQuiz('${sec.id}')">Start →</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+// =====================================================================
+// QUIZ START
+// =====================================================================
+function startQuiz(secId) {
+  const sec = SECTIONS.find(s => s.id === secId);
+  state.section = sec;
+  state.questions = shuffle(sec.data).slice(0, 100);
+  state.current = 0;
+  state.answers = {};
+  state.revealed = {};
+  state.timer = 0;
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => {
+    state.timer++;
+    document.getElementById("tbInfo").textContent = getInfoText();
+  }, 1000);
+
+  show("quiz");
+  document.getElementById("tbSection").style.color = sec.color;
+  document.getElementById("tbSection").textContent = sec.label;
+  document.getElementById("btnSubmitAll").style.background = sec.color;
+  document.getElementById("progBar").style.background = sec.color;
+  renderQuestion();
+  buildNav();
+}
+
+function getInfoText() {
+  const answered = Object.keys(state.answers).length;
+  return `${state.current+1} / ${state.questions.length}  ·  ${answered} answered  ·  ⏱ ${fmt(state.timer)}`;
+}
+
+// =====================================================================
+// RENDER QUESTION
+// =====================================================================
+function renderQuestion() {
+  const {section: sec, questions, current, answers, revealed} = state;
+  const q = questions[current];
+  const color = sec.color;
+
+  document.getElementById("tbInfo").textContent = getInfoText();
+  const pct = Math.round((Object.keys(answers).length / questions.length) * 100);
+  document.getElementById("progBar").style.width = pct + "%";
+
+  document.getElementById("qCard").style.background = "rgba(255,255,255,0.04)";
+  document.getElementById("qCard").style.border = `1px solid ${color}44`;
+  document.getElementById("qLabel").style.color = color;
+  document.getElementById("qLabel").textContent = `Question ${current + 1}`;
+  document.getElementById("qText").textContent = q.q;
+
+  const inputDiv = document.getElementById("qInput");
+  const fbDiv = document.getElementById("qFeedback");
+  fbDiv.innerHTML = "";
+
+  const alreadyRevealed = revealed[current];
+  const savedAnswer = answers[current];
+
+  if (sec.id === "identification") {
+    inputDiv.innerHTML = `<input class="txt-input" id="txtInput" placeholder="Type the exact term..." value="${esc(savedAnswer||"")}" ${alreadyRevealed?"disabled":""} style="border-color:${color}66">`;
+    if (!alreadyRevealed) {
+      document.getElementById("txtInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") revealIdentification();
+      });
+      inputDiv.innerHTML += `<br><br><button onclick="revealIdentification()" style="padding:11px 22px;border-radius:10px;background:${color};border:none;color:#fff;font-size:14px;font-weight:700;margin-top:2px">Check Answer</button>`;
+    }
+    if (alreadyRevealed) showFeedbackIdentification(q, savedAnswer, color);
+
+  } else if (sec.id === "mtf") {
+    const picked = savedAnswer;
+    inputDiv.innerHTML = `
+      <div class="tf-wrap">
+        <button class="tf-btn" id="tfTrue" onclick="answerTF('true')" style="${picked==='true'?`background:${color};border-color:${color};color:#fff`:""}">TRUE</button>
+        <button class="tf-btn" id="tfFalse" onclick="answerTF('false')" style="${picked==='false'?`background:${color};border-color:${color};color:#fff`:""}">FALSE</button>
+      </div>`;
+    if (alreadyRevealed) {
+      document.getElementById("tfTrue").disabled = true;
+      document.getElementById("tfFalse").disabled = true;
+      showFeedbackMTF(q, picked, color);
+    }
+
+  } else if (sec.id === "wordbank") {
+    const chips = q.bank.map((b,i) => {
+      const sel = savedAnswer === b;
+      return `<button class="bank-chip" onclick="answerWordbank('${esc(b)}')" ${alreadyRevealed?"disabled":""} style="${sel?`background:${color};border-color:${color};color:#fff`:""}">${esc(b)}</button>`;
+    }).join("");
+    inputDiv.innerHTML = `<div class="bank-chips">${chips}</div>`;
+    if (alreadyRevealed) showFeedbackWordbank(q, savedAnswer, color);
+
+  } else if (sec.id === "mc") {
+    const letters = ["A","B","C","D"];
+    const btns = q.options.map((opt,i) => {
+      const sel = savedAnswer === String(i);
+      return `<button class="mc-btn" onclick="answerMC(${i})" ${alreadyRevealed?"disabled":""} style="${sel?`background:${color};border-color:${color};color:#fff`:""}">${`<span class='opt-letter'>${letters[i]}.</span>`}${esc(opt)}</button>`;
+    }).join("");
+    inputDiv.innerHTML = `<div class="mc-options">${btns}</div>`;
+    if (alreadyRevealed) showFeedbackMC(q, savedAnswer, color);
+  }
+
+  // nav buttons
+  document.getElementById("btnPrev").disabled = current === 0;
+  document.getElementById("btnPrev").style.opacity = current === 0 ? "0.4" : "1";
+  const btnNext = document.getElementById("btnNext");
+  if (current === questions.length - 1) {
+    btnNext.className = "btn-finish";
+    btnNext.textContent = "Finish & Grade ✓";
+    btnNext.onclick = submitAll;
+  } else {
+    btnNext.className = "btn-next";
+    btnNext.style.background = color;
+    btnNext.textContent = "Next →";
+    btnNext.onclick = goNext;
+  }
+
+  buildNav();
+}
+
+// =====================================================================
+// ANSWER HANDLERS
+// =====================================================================
+function revealIdentification() {
+  const input = document.getElementById("txtInput");
+  const val = input ? input.value.trim() : "";
+  state.answers[state.current] = val;
+  state.revealed[state.current] = true;
+  renderQuestion();
+}
+
+function answerTF(val) {
+  if (state.revealed[state.current]) return;
+  state.answers[state.current] = val;
+  state.revealed[state.current] = true;
+  renderQuestion();
+}
+
+function answerWordbank(val) {
+  if (state.revealed[state.current]) return;
+  state.answers[state.current] = val;
+  state.revealed[state.current] = true;
+  renderQuestion();
+}
+
+function answerMC(idx) {
+  if (state.revealed[state.current]) return;
+  state.answers[state.current] = String(idx);
+  state.revealed[state.current] = true;
+  renderQuestion();
+}
+
+// =====================================================================
+// FEEDBACK RENDERERS
+// =====================================================================
+function showFeedbackIdentification(q, ua, color) {
+  const correct = (ua||"").trim().toLowerCase() === q.a.toLowerCase();
+  const fb = document.getElementById("qFeedback");
+  fb.innerHTML = correct
+    ? `<div class="feedback-box feedback-correct">✅ Correct! The answer is <strong>${esc(q.a)}</strong>.</div>`
+    : `<div class="feedback-box feedback-wrong">❌ Incorrect. Your answer: <em>${esc(ua||"(blank)")}</em><br><strong>✓ Correct answer: ${esc(q.a)}</strong></div>`;
+}
+
+function showFeedbackMTF(q, ua, color) {
+  const correct = (ua==="true" && q.correct) || (ua==="false" && !q.correct);
+  const fb = document.getElementById("qFeedback");
+  if (correct) {
+    fb.innerHTML = `<div class="feedback-box feedback-correct">✅ Correct! The statement is <strong>${q.correct?"TRUE":"FALSE"}</strong>.</div>`;
+  } else {
+    let html = `<div class="feedback-box feedback-wrong">❌ Incorrect. The statement is <strong>${q.correct?"TRUE":"FALSE"}</strong>.`;
+    if (!q.correct && q.correction) html += `<br><br><strong>Correction:</strong> ${esc(q.correction)}`;
+    html += `</div>`;
+    fb.innerHTML = html;
+  }
+}
+
+function showFeedbackWordbank(q, ua, color) {
+  const correct = (ua||"").trim().toLowerCase() === q.a.toLowerCase();
+  const fb = document.getElementById("qFeedback");
+  fb.innerHTML = correct
+    ? `<div class="feedback-box feedback-correct">✅ Correct! The answer is <strong>${esc(q.a)}</strong>.</div>`
+    : `<div class="feedback-box feedback-wrong">❌ Incorrect. You selected: <em>${esc(ua||"(none)")}</em><br><strong>✓ Correct answer: ${esc(q.a)}</strong></div>`;
+}
+
+function showFeedbackMC(q, ua, color) {
+  const letters = ["A","B","C","D"];
+  const sel = parseInt(ua);
+  const correct = sel === q.a;
+  const fb = document.getElementById("qFeedback");
+  fb.innerHTML = correct
+    ? `<div class="feedback-box feedback-correct">✅ Correct! <strong>${letters[q.a]}. ${esc(q.options[q.a])}</strong></div>`
+    : `<div class="feedback-box feedback-wrong">❌ Incorrect. You chose: <em>${!isNaN(sel)?letters[sel]+". "+esc(q.options[sel]):"(none)"}</em><br><strong>✓ Correct: ${letters[q.a]}. ${esc(q.options[q.a])}</strong></div>`;
+}
+
+// =====================================================================
+// NAVIGATION
+// =====================================================================
+function goNext() {
+  if (state.current < state.questions.length - 1) {
+    state.current++;
+    renderQuestion();
+  }
+}
+
+function goPrev() {
+  if (state.current > 0) {
+    state.current--;
+    renderQuestion();
+  }
+}
+
+function buildNav() {
+  const nav = document.getElementById("qNav");
+  const color = state.section.color;
+  nav.innerHTML = state.questions.map((_, i) => {
+    const answered = state.answers[i] !== undefined;
+    const isCur = i === state.current;
+    const bg = isCur ? color : answered ? color+"66" : "rgba(255,255,255,0.08)";
+    const col = isCur || answered ? "#f0e6d3" : "#666";
+    return `<button class="qnum-btn" onclick="jumpTo(${i})" style="background:${bg};color:${col}">${i+1}</button>`;
+  }).join("");
+}
+
+function jumpTo(i) {
+  state.current = i;
+  renderQuestion();
+}
+
+// =====================================================================
+// SUBMIT
+// =====================================================================
+function submitAll() {
+  clearInterval(state.timerInterval);
+  let correct = 0;
+  const sec = state.section;
+  state.questions.forEach((q, i) => {
+    const ua = state.answers[i] || "";
+    if (sec.id === "identification") {
+      if (ua.trim().toLowerCase() === q.a.toLowerCase()) correct++;
+    } else if (sec.id === "mtf") {
+      if ((ua==="true"&&q.correct)||(ua==="false"&&!q.correct)) correct++;
+    } else if (sec.id === "wordbank") {
+      if (ua.trim().toLowerCase() === q.a.toLowerCase()) correct++;
+    } else if (sec.id === "mc") {
+      if (parseInt(ua) === q.a) correct++;
+    }
+  });
+  state.score = correct;
+  showResults();
+}
+
+// =====================================================================
+// RESULTS
+// =====================================================================
+function showResults() {
+  const sec = state.section;
+  const pct = Math.round((state.score / state.questions.length) * 100);
+  const gradeColor = pct>=90?"#27ae60":pct>=70?"#c8a96e":"#e74c3c";
+  const grade = pct>=90?"Excellent":pct>=80?"Very Good":pct>=70?"Good":pct>=60?"Passing":"Needs Review";
+
+  document.getElementById("scoreCard").style.background = "rgba(255,255,255,0.04)";
+  document.getElementById("scoreCard").style.border = `1px solid ${gradeColor}44`;
+  document.getElementById("resEyebrow").style.color = sec.color;
+  document.getElementById("resEyebrow").textContent = `${sec.label} · Results`;
+  document.getElementById("resPct").style.background = `linear-gradient(135deg,${gradeColor},#f0e6d3)`;
+  document.getElementById("resPct").style.webkitBackgroundClip = "text";
+  document.getElementById("resPct").style.webkitTextFillColor = "transparent";
+  document.getElementById("resPct").textContent = pct + "%";
+  document.getElementById("resGrade").style.color = gradeColor;
+  document.getElementById("resGrade").textContent = grade;
+  document.getElementById("resSub").textContent = `${state.score} correct out of ${state.questions.length}  ·  Time: ${fmt(state.timer)}`;
+  document.getElementById("btnRetry").style.background = sec.color;
+
+  // Wrong answers
+  const wrongSection = document.getElementById("wrongSection");
+  const wrong = state.questions.map((q,i)=>({q,i,ua:state.answers[i]||""})).filter(({q,i,ua})=>{
+    const sec2 = sec;
+    if(sec2.id==="identification") return ua.trim().toLowerCase()!==q.a.toLowerCase();
+    if(sec2.id==="mtf") return !((ua==="true"&&q.correct)||(ua==="false"&&!q.correct));
+    if(sec2.id==="wordbank") return ua.trim().toLowerCase()!==q.a.toLowerCase();
+    if(sec2.id==="mc") return parseInt(ua)!==q.a;
+    return false;
+  });
+
+  if (wrong.length === 0) {
+    wrongSection.innerHTML = `<div class="perfect">🏆 Perfect Score! Complete mastery of this section.</div>`;
+  } else {
+    const letters = ["A","B","C","D"];
+    let html = `<button class="toggle-wrong" onclick="toggleWrong(this)">▼ Review ${wrong.length} Incorrect Answers</button><div id="wrongList" style="display:none">`;
+    wrong.forEach(({q,i,ua}) => {
+      let detail = "";
+      if (sec.id==="identification"||sec.id==="wordbank") {
+        detail = `<div class="wi-yours">Your answer: <em>${esc(ua||"(blank)")}</em></div><div class="wi-correct">✓ Correct: ${esc(q.a)}</div>`;
+      } else if (sec.id==="mtf") {
+        const sel = ua==="true"?"TRUE":"FALSE";
+        const correct2 = q.correct?"TRUE":"FALSE";
+        detail = `<div class="wi-yours">Your answer: <strong>${sel||"(unanswered)"}</strong> · Correct: <strong>${correct2}</strong></div>`;
+        if (!q.correct && q.correction) detail += `<div class="wi-correction"><strong>Correction:</strong> ${esc(q.correction)}</div>`;
+      } else if (sec.id==="mc") {
+        const selIdx = parseInt(ua);
+        detail = `<div class="wi-yours">Your answer: ${!isNaN(selIdx)?letters[selIdx]+". "+esc(q.options[selIdx]):"(unanswered)"}</div><div class="wi-correct">✓ Correct: ${letters[q.a]}. ${esc(q.options[q.a])}</div>`;
+      }
+      html += `<div class="wrong-item"><div class="wi-num">Q${i+1}</div><div class="wi-q">${esc(q.q)}</div>${detail}</div>`;
+    });
+    html += `</div>`;
+    wrongSection.innerHTML = html;
+  }
+
+  show("results");
+}
+
+function toggleWrong(btn) {
+  const list = document.getElementById("wrongList");
+  if (list.style.display==="none") { list.style.display="block"; btn.textContent=btn.textContent.replace("▼","▲"); }
+  else { list.style.display="none"; btn.textContent=btn.textContent.replace("▲","▼"); }
+}
+
+function retrySection() { startQuiz(state.section.id); }
+
+function goHome() {
+  clearInterval(state.timerInterval);
+  show("home");
+}
+
+function show(id) {
+  ["home","quiz","results"].forEach(s => {
+    document.getElementById(s).style.display = s===id ? (s==="quiz"?"flex":"block") : "none";
+  });
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+buildHome();
+show("home");
+</script>
+</body>
+</html>
